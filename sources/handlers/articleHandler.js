@@ -25,7 +25,7 @@ const postUserArticle = async (req, res) => {
             id: id,
             title,
             content,
-            author: req.user.id
+            author: req.user._id
         });
         return res.status(201).json({
             message: 'article created',
@@ -46,7 +46,7 @@ const getUserArticle = async (req, res) => {
                 error: 'unauthorized'
             });
         }
-        const userId = req.user.id;
+        const userId = req.user._id;
         const articles = await Article.find({ author: userId });
         return res.status(200).json({
             message: 'your articles',
@@ -76,7 +76,7 @@ const updateUserArticle = async (req, res) => {
                 error: 'title already exist'
             });
         }
-        if(article.author !== req.user.id) {
+        if(!article.author.equals(req.user._id)) {
             return res.status(403).json({
                 error: 'forbidden: you are not the author'
             });
@@ -107,10 +107,10 @@ const deleteUserArticle = async (req, res) => {
         const article = await Article.findOne({ id });
         if(!article) {
             return res.status(404).json({
-                error: 'article not found'
+                error: 'article not found',
             });
         }
-        if(article.author !== req.user.id) {
+        if(!article.author.equals(req.user._id)) {
             return res.status(403).json({
                 error: 'forbidden: you are not the author'
             });
