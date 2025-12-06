@@ -5,8 +5,8 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
 // jwt token expired time set to 30mins
-const createToken = (id) => {
-    return jwt.sign({ id }, process.env.TOKEN, { expiresIn: 1800 });
+const createToken = (id, username) => {
+    return jwt.sign({ id, username }, process.env.TOKEN, { expiresIn: 1800 });
 };
 
 // signup
@@ -83,7 +83,7 @@ const login = async (req, res) => {
             });
         }
         // if user data valid then create token
-        const token = createToken(user.id);
+        const token = createToken(user.id, user.username);
         return res.status(200).json({
             username: user.username,
             token

@@ -48,7 +48,7 @@ const getUserProject = async (req, res) => {
             });
         }
         const userId = req.user._id;
-        const projects = await Project.find({ author: userId });
+        const projects = await Project.find({ author: userId }).populate("author", "username");;
         return res.status(200).json({
             message: 'your projects',
             projects
