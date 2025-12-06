@@ -3,7 +3,7 @@ const Projects = require('../models/projectModel');
 
 const getArticles = async (req, res) => {
     try {
-        const articles = await Articles.find();
+        const articles = await Articles.find().populate("author", "username");
         if(articles.length === 0) {
             return res.status(404).json({
                 error: 'empty articles'
@@ -44,7 +44,7 @@ const getArticleById = async (req, res) => {
 
 const getProjects = async (req, res) => {
     try {
-        const projects = await Projects.find();
+        const projects = await Projects.find().populate("author", "username");
         if(projects.length === 0) {
             return res.status(404).json({
                 error: 'empty projects'

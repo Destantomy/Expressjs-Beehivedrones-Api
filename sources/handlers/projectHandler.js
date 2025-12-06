@@ -26,7 +26,7 @@ const postUserProject = async (req, res) => {
             title,
             description,
             tools,
-            author: req.user.id
+            author: req.user._id
         });
         return res.status(201).json({
             message: 'project created',
@@ -47,7 +47,7 @@ const getUserProject = async (req, res) => {
                 error: 'unauthorized'
             });
         }
-        const userId = req.user.id;
+        const userId = req.user._id;
         const projects = await Project.find({ author: userId });
         return res.status(200).json({
             message: 'your projects',
@@ -77,7 +77,7 @@ const updateUserProject = async (req, res) => {
                 error: 'title already exist'
             });
         }
-        if(project.author !== req.user.id) {
+        if(!project.author.equals(req.user._id)) {
             return res.status(403).json({
                 error: 'forbidden: you are not the author'
             });
@@ -114,7 +114,7 @@ const deleteUserProject = async (req, res) => {
                 error: 'project not found'
             });
         }
-        if(project.author !== req.user.id) {
+        if(!project.author.equals(req.user._id)) {
             return res.status(403).json({
                 error: 'forbidden: you are not the author'
             });
