@@ -47,7 +47,7 @@ const getUserArticle = async (req, res) => {
             });
         }
         const userId = req.user._id;
-        const articles = await Article.find({ author: userId });
+        const articles = await Article.find({ author: userId }).populate("author", "username");
         return res.status(200).json({
             message: 'your articles',
             articles

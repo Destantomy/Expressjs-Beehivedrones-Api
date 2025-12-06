@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+const cors = require('cors');
 const connectDB = require('./database/connection');
 const landingRouter = require('./routes/landingRoute');
 const authRouter = require('./routes/authRoute');
@@ -8,6 +9,13 @@ const projectRouter = require('./routes/projectRoute');
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+app.use(cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
 
 // middleware
 app.use(express.json());
