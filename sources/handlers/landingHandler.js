@@ -21,6 +21,27 @@ const getArticles = async (req, res) => {
     }
 }
 
+const getArticleById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const article = await Articles.findOne({ id });
+        if(!article) {
+            return res.status(404).json({
+                error: 'article not found'
+            });
+        }
+        return res.status(200).json({
+            message: 'showing article by its id',
+            article
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            error: 'internal server error'
+        });
+    }
+}
+
 const getProjects = async (req, res) => {
     try {
         const projects = await Projects.find();
@@ -41,4 +62,25 @@ const getProjects = async (req, res) => {
     }
 }
 
-module.exports = { getArticles, getProjects };
+const getProjectById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const project = await Projects.findOne({ id });
+        if(!project) {
+            return res.status(404).json({
+                error: 'project not found'
+            });
+        }
+        return res.status(200).json({
+            message: 'showing project by its id',
+            project
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            error: 'internal server error'
+        });
+    }
+}
+
+module.exports = { getArticles, getArticleById, getProjects, getProjectById };
