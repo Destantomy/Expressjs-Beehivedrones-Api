@@ -60,6 +60,43 @@ const getUserArticle = async (req, res) => {
     }
 }
 
+const getUserArticleById = async (req, res) => {
+    try {
+        if (!req.isUser) {
+            return res.status(401).json({
+                error: 'unauthorized'
+            });
+        }
+
+        const { id } = req.params;
+
+        const article = await Article.findOne({ id })
+            .populate("author", "username");
+
+        if (!article) {
+            return res.status(404).json({
+                error: 'article not found'
+            });
+        }
+        if (!article.author._id.equals(req.user._id)) {
+            return res.status(403).json({
+                error: 'forbidden: you are not the author'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'article found',
+            article
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            error: 'internal server error'
+        });
+    }
+};
+
+
 const updateUserArticle = async (req, res) => {
     try {
         const { id } = req.params;
@@ -70,12 +107,12 @@ const updateUserArticle = async (req, res) => {
                 error: 'article not found'
             });
         }
-        const exist = await Article.findOne({ title });
-        if(exist) {
-            return res.status(400).json({
-                error: 'title already exist'
-            });
-        }
+        // const exist = await Article.findOne({ title });
+        // if(exist) {
+        //     return res.status(400).json({
+        //         error: 'title already exist'
+        //     });
+        // }
         if(!article.author.equals(req.user._id)) {
             return res.status(403).json({
                 error: 'forbidden: you are not the author'
@@ -127,4 +164,4 @@ const deleteUserArticle = async (req, res) => {
     }
 }
 
-module.exports = { postUserArticle, getUserArticle, updateUserArticle, deleteUserArticle };
+module.exports = { postUserArticle, getUserArticle, getUserArticleById, updateUserArticle, deleteUserArticle };
