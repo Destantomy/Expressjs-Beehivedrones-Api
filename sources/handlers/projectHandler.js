@@ -61,6 +61,43 @@ const getUserProject = async (req, res) => {
     }
 }
 
+const getUserProjectById = async (req, res) => {
+    try {
+        if (!req.isUser) {
+            return res.status(401).json({
+                error: 'unauthorized'
+            });
+        }
+
+        const { id } = req.params;
+
+        const project = await Project.findOne({ id })
+            .populate("author", "username");
+
+        if (!project) {
+            return res.status(404).json({
+                error: 'project not found'
+            });
+        }
+        if (!project.author._id.equals(req.user._id)) {
+            return res.status(403).json({
+                error: 'forbidden: you are not the author'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'project found',
+            project
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            error: 'internal server error'
+        });
+    }
+};
+
+
 const updateUserProject = async (req, res) => {
     try {
         const { id } = req.params;
@@ -71,12 +108,12 @@ const updateUserProject = async (req, res) => {
                 error: 'project not found'
             });
         }
-        const exist = await Project.findOne({ title });
-        if(exist) {
-            return res.status(400).json({
-                error: 'title already exist'
-            });
-        }
+        // const exist = await Project.findOne({ title });
+        // if(exist) {
+        //     return res.status(400).json({
+        //         error: 'title already exist'
+        //     });
+        // }
         if(!project.author.equals(req.user._id)) {
             return res.status(403).json({
                 error: 'forbidden: you are not the author'
@@ -131,4 +168,4 @@ const deleteUserProject = async (req, res) => {
     }
 }
 
-module.exports = { postUserProject, getUserProject, updateUserProject, deleteUserProject };
+module.exports = { postUserProject, getUserProject, getUserProjectById, updateUserProject, deleteUserProject };
